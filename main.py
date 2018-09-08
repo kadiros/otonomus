@@ -3,21 +3,29 @@ import heapq
 from Graph import Graph
 
 
-def shortest(v, path):
+def shortest(target_id, path=None):
     ''' make shortest path from v.previous'''
+    v = g.get_vertex(target_id)
+    if path==None:
+        path = [v.get_id()]
+
     if v.previous:
         path.append(v.previous.get_id())
-        shortest(v.previous, path)
-    return
+        shortest(v.previous.get_id(), path)
+    return path
 
 
-def dijkstra(aGraph, start, target):
+def dijkstra(d_g, start_id):
     print '''Dijkstra's shortest path'''
+
+    # Init variables
+    start = g.get_vertex(start_id)
+
     # Set the distance for the start node to zero
     start.set_distance(0)
 
     # Put tuple pair into the priority queue
-    unvisited_queue = [(v.get_distance(), v) for v in aGraph]
+    unvisited_queue = [(v.get_distance(), v) for v in d_g]
     heapq.heapify(unvisited_queue)
 
     while len(unvisited_queue):
@@ -47,9 +55,8 @@ def dijkstra(aGraph, start, target):
         while len(unvisited_queue):
             heapq.heappop(unvisited_queue)
         # 2. Put all vertices not visited into the queue
-        unvisited_queue = [(v.get_distance(), v) for v in aGraph if not v.visited]
+        unvisited_queue = [(v.get_distance(), v) for v in d_g if not v.visited]
         heapq.heapify(unvisited_queue)
-
 
 if __name__ == '__main__':
 
@@ -176,9 +183,9 @@ if __name__ == '__main__':
             wid = w.get_id()
             print '( %s , %s, %3d)' % (vid, wid, v.get_weight(w))
 
-    dijkstra(g, g.get_vertex('1'), g.get_vertex('26'))
+    dijkstra(g, '1')
+    # dijkstra calculated all distances from the starting point 1
 
-    target = g.get_vertex('26')
-    path = [target.get_id()]
-    shortest(target, path)
+    path = shortest('26')
+
     print 'The shortest path : %s' % (path[::-1])

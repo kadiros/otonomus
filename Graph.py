@@ -36,5 +36,5 @@ class Graph:
     def set_previous(self, current):
         self.previous = current
 
-    def get_previous(self, current):
+    def get_previous(self):
         return self.previous
