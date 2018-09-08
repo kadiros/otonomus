@@ -53,9 +53,12 @@ class Graph:
     def add_edges(self, lines):
         for line in lines:
             raw = line.split(" ")
-            self.add_edge(raw[0], raw[1], raw[2])
+            if len(raw) > 3:
+                self.add_edge(raw[0], raw[1], raw[2],raw[3])
+            else:
+                self.add_edge(raw[0], raw[1], raw[2])
 
-    def add_edge(self, frm, to, cost=0):
+    def add_edge(self, frm, to, cost=0,is_two_way=False):
         cost = int(cost)
         if frm not in self.vert_dict:
             self.add_vertex(frm)
@@ -63,7 +66,8 @@ class Graph:
             self.add_vertex(to)
 
         self.vert_dict[frm].add_neighbor(self.vert_dict[to], cost)
-        self.vert_dict[to].add_neighbor(self.vert_dict[frm], cost)
+        if is_two_way:
+            self.vert_dict[to].add_neighbor(self.vert_dict[frm], cost)
 
     def get_vertices(self):
         return self.vert_dict.keys()

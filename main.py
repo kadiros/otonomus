@@ -9,9 +9,9 @@ def main():
     if print_info:
         g.print_graph()
 
-    g.dijkstra('1')
+    g.dijkstra('6')
     # dijkstra calculated all distances from the starting point 1
-    path = g.shortest('26')
+    path = g.shortest('4')
     print 'The shortest path : %s' % (path[::-1])
 
 
