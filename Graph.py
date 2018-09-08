@@ -4,12 +4,39 @@ from Vertex import Vertex
 
 
 class Graph:
-    def __init__(self):
+    def __init__(self, print_info):
+        self.print_info = print_info
         self.vert_dict = {}
         self.num_vertices = 0
+        self.read_vertices_from_file()
+        self.read_edges_from_file()
 
     def __iter__(self):
         return iter(self.vert_dict.values())
+
+    def read_vertices_from_file(self):
+        vertices = open("vertices.txt", "r")
+
+        if vertices.mode == "r":
+            contents = vertices.read()
+            self.add_vertices(contents.splitlines())
+            if self.print_info:
+                print contents
+
+        vertices.close()
+
+    def read_edges_from_file(self):
+        edges = open("edges.txt", "r")
+        if edges.mode == "r":
+            contents = edges.read()
+            self.add_edges(contents.splitlines())
+            if self.print_info:
+                print contents
+        edges.close()
+
+    def add_vertices(self, lines):
+        for line in lines:
+            self.add_vertex(line)
 
     def add_vertex(self, node):
         self.num_vertices = self.num_vertices + 1
@@ -23,7 +50,13 @@ class Graph:
         else:
             return None
 
+    def add_edges(self, lines):
+        for line in lines:
+            raw = line.split(" ")
+            self.add_edge(raw[0], raw[1], raw[2])
+
     def add_edge(self, frm, to, cost=0):
+        cost = int(cost)
         if frm not in self.vert_dict:
             self.add_vertex(frm)
         if to not in self.vert_dict:
@@ -42,7 +75,8 @@ class Graph:
         return self.previous
 
     def dijkstra(self, start_id):
-        print '''Dijkstra's shortest path'''
+        if self.print_info:
+            print '''Dijkstra's shortest path'''
 
         # Init variables
         start = self.get_vertex(start_id)
@@ -70,10 +104,12 @@ class Graph:
                 if new_dist < next_vertex.get_distance():
                     next_vertex.set_distance(new_dist)
                     next_vertex.set_previous(current)
-                    print 'updated : current = %s next = %s new_dist = %s' \
+                    if self.print_info:
+                        print 'updated : current = %s next = %s new_dist = %s' \
                           % (current.get_id(), next_vertex.get_id(), next_vertex.get_distance())
                 else:
-                    print 'not updated : current = %s next = %s new_dist = %s' \
+                    if self.print_info:
+                        print 'not updated : current = %s next = %s new_dist = %s' \
                           % (current.get_id(), next_vertex.get_id(), next_vertex.get_distance())
 
             # Rebuild heap
@@ -94,3 +130,11 @@ class Graph:
             path.append(v.previous.get_id())
             self.shortest(v.previous.get_id(), path)
         return path
+
+    def print_graph(self):
+        print 'Graph data:'
+        for v in self:
+            for w in v.get_connections():
+                vid = v.get_id()
+                wid = w.get_id()
+                print '( %s , %s, %3d)' % (vid, wid, v.get_weight(w))
