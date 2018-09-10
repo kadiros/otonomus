@@ -1,18 +1,20 @@
+import network
 from Graph import Graph
+
+TCP_IP = '192.168.43.22'
+port = 12345
 
 
 def main():
-    global print_info, g
-    print_info = False
-    g = Graph(print_info)
+    passanger_info = network.get_info(TCP_IP, port)
+    print passanger_info
 
-    if print_info:
-        g.print_graph()
-
+    g = Graph()
+    g.print_graph()
     g.dijkstra('6')
-    # dijkstra calculated all distances from the starting point 1
+
     path = g.shortest('4')
-    print 'The shortest path : %s' % (path[::-1])
+    print ('The shortest path : %s' % (path[::-1]))
 
 
 if __name__ == '__main__':

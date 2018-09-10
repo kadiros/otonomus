@@ -1,11 +1,11 @@
 import heapq
 
+import logger
 from Vertex import Vertex
 
 
 class Graph:
-    def __init__(self, print_info):
-        self.print_info = print_info
+    def __init__(self):
         self.vert_dict = {}
         self.num_vertices = 0
         self.read_vertices_from_file()
@@ -20,8 +20,7 @@ class Graph:
         if vertices.mode == "r":
             contents = vertices.read()
             self.add_vertices(contents.splitlines())
-            if self.print_info:
-                print contents
+            logger.log(contents)
 
         vertices.close()
 
@@ -30,8 +29,7 @@ class Graph:
         if edges.mode == "r":
             contents = edges.read()
             self.add_edges(contents.splitlines())
-            if self.print_info:
-                print contents
+            logger.log(contents)
         edges.close()
 
     def add_vertices(self, lines):
@@ -79,8 +77,7 @@ class Graph:
         return self.previous
 
     def dijkstra(self, start_id):
-        if self.print_info:
-            print '''Dijkstra's shortest path'''
+        logger.log("Dijkstra's shortest path")
 
         # Init variables
         start = self.get_vertex(start_id)
@@ -108,13 +105,11 @@ class Graph:
                 if new_dist < next_vertex.get_distance():
                     next_vertex.set_distance(new_dist)
                     next_vertex.set_previous(current)
-                    if self.print_info:
-                        print 'updated : current = %s next = %s new_dist = %s' \
-                          % (current.get_id(), next_vertex.get_id(), next_vertex.get_distance())
+                    logger.log('updated : current = %s next = %s new_dist = %s' \
+                               % (current.get_id(), next_vertex.get_id(), next_vertex.get_distance()))
                 else:
-                    if self.print_info:
-                        print 'not updated : current = %s next = %s new_dist = %s' \
-                          % (current.get_id(), next_vertex.get_id(), next_vertex.get_distance())
+                    logger.log('not updated : current = %s next = %s new_dist = %s' \
+                               % (current.get_id(), next_vertex.get_id(), next_vertex.get_distance()))
 
             # Rebuild heap
             # 1. Pop every item
@@ -136,9 +131,9 @@ class Graph:
         return path
 
     def print_graph(self):
-        print 'Graph data:'
+        logger.log('Graph data:')
         for v in self:
             for w in v.get_connections():
                 vid = v.get_id()
                 wid = w.get_id()
-                print '( %s , %s, %3d)' % (vid, wid, v.get_weight(w))
+                logger.log('( %s , %s, %3d)' % (vid, wid, v.get_weight(w)))
