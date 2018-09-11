@@ -15,7 +15,7 @@ class Graph:
         return iter(self.vert_dict.values())
 
     def read_vertices_from_file(self):
-        vertices = open("vertices.txt", "r")
+        vertices = open("coor.txt", "r")
 
         if vertices.mode == "r":
             contents = vertices.read()
@@ -37,9 +37,10 @@ class Graph:
             self.add_vertex(line)
 
     def add_vertex(self, node):
+        node = node.split(" ")
         self.num_vertices = self.num_vertices + 1
-        new_vertex = Vertex(node)
-        self.vert_dict[node] = new_vertex
+        new_vertex = Vertex(node[0], int(node[1]), int(node[2]))
+        self.vert_dict[node[0]] = new_vertex
         return new_vertex
 
     def get_vertex(self, n):
@@ -58,11 +59,6 @@ class Graph:
 
     def add_edge(self, frm, to, cost=0,is_two_way=False):
         cost = int(cost)
-        if frm not in self.vert_dict:
-            self.add_vertex(frm)
-        if to not in self.vert_dict:
-            self.add_vertex(to)
-
         self.vert_dict[frm].add_neighbor(self.vert_dict[to], cost)
         if is_two_way:
             self.vert_dict[to].add_neighbor(self.vert_dict[frm], cost)

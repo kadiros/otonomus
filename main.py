@@ -1,8 +1,8 @@
 import network
 from Graph import Graph
 
-TCP_IP = '192.168.43.22'
-port = 12345
+TCP_IP = '192.168.1.102'
+port = 12349
 
 
 def main():

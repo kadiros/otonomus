@@ -2,8 +2,10 @@ import sys
 
 
 class Vertex:
-    def __init__(self, node):
+    def __init__(self, node, x_coor, y_coor):
         self.id = node
+        self.x = x_coor
+        self.y = y_coor
         self.adjacent = {}
         # Set distance to infinity for all nodes
         self.distance = sys.maxint
