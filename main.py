@@ -1,5 +1,6 @@
 import network
 from Graph import Graph
+import distance
 
 TCP_IP = '192.168.1.102'
 port = 12349
@@ -13,6 +14,7 @@ def main():
     g.print_graph()
     g.dijkstra('6')
 
+    print (distance.pnt2line())
     path = g.shortest('4')
     print ('The shortest path : %s' % (path[::-1]))
 
