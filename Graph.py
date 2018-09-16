@@ -1,12 +1,19 @@
 import heapq
+from sets import Set
 
+import distance
 import logger
 from Vertex import Vertex
 
+MAX_PASSENGER_DISTANCE = 200
+
 
 class Graph:
-    def __init__(self):
+    def __init__(self, passenger_info):
+        self.passenger_info = passenger_info
         self.vert_dict = {}
+        self.pick_up_set = Set()
+        self.drop_loc_set = Set()
         self.num_vertices = 0
         self.read_vertices_from_file()
         self.read_edges_from_file()
@@ -38,7 +45,7 @@ class Graph:
 
     def add_vertex(self, node):
         node = node.split(" ")
-        self.num_vertices = self.num_vertices + 1
+        self.num_vertices += 1
         new_vertex = Vertex(node[0], int(node[1]), int(node[2]))
         self.vert_dict[node[0]] = new_vertex
         return new_vertex
@@ -53,15 +60,34 @@ class Graph:
         for line in lines:
             raw = line.split(" ")
             if len(raw) > 3:
-                self.add_edge(raw[0], raw[1], raw[2],raw[3])
+                self.add_edge(raw[0], raw[1], raw[2], raw[3])
             else:
                 self.add_edge(raw[0], raw[1], raw[2])
 
-    def add_edge(self, frm, to, cost=0,is_two_way=False):
+    def add_edge(self, frm, to, cost=0, is_two_way=False):
         cost = int(cost)
         self.vert_dict[frm].add_neighbor(self.vert_dict[to], cost)
+        self.is_possible_terminal(frm, to)
         if is_two_way:
             self.vert_dict[to].add_neighbor(self.vert_dict[frm], cost)
+            self.is_possible_terminal(to, frm)
+
+    def is_possible_terminal(self, frm, to):
+        p = self.passenger_info[0][1], self.passenger_info[0][2]
+        d = self.passenger_info[1][1], self.passenger_info[1][2]
+        f = self.vert_dict[frm]
+        t = self.vert_dict[to]
+
+        # is possible pick up location
+        if self.is_near(p, f, t):
+            self.pick_up_set.add((frm, to))
+
+        # is possible drop down location
+        if self.is_near(d, f, t):
+            self.drop_loc_set.add((frm, to))
+
+    def is_near(self, p, s, e):
+        return distance.pnt2line(p, (s.x, s.y), (e.x, e.y))[0] < MAX_PASSENGER_DISTANCE
 
     def get_vertices(self):
         return self.vert_dict.keys()
