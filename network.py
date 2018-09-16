@@ -13,7 +13,9 @@ def get_info(ip, port):
     my_bytes = bytearray(data)
     l1 = get_location(my_bytes, 0)
     l2 = get_location(my_bytes, 11)
-    return l1, l2
+    if l1[0]:
+        return l1, l2
+    return l2, l1
 
 
 def get_location(my_bytes, offset):
