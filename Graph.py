@@ -97,15 +97,55 @@ class Graph:
     def get_vertices(self):
         return self.vert_dict.keys()
 
-    def set_previous(self, current):
-        self.previous = current
+    def get_route(self):
+        route = None
+        for p in self.pick_up_set:
+            for d in self.drop_loc_set:
+                r = self.get_route_internal(p, d)
+                if r is None:
+                    continue
+                if route is None or r[0] < route[0]:
+                    route = r
 
-    def get_previous(self):
-        return self.previous
+        logger.log(route)
+        return route
+
+    def get_route_internal(self, p, d):
+        sp = self.get_shortest_path('1', p[0])
+
+        p0 = self.get_vertex(p[0])
+        cost = p0.distance
+
+        cost += p0.get_weight(self.get_vertex(p[1]))
+
+        pd = self.get_shortest_path(p[1], d[0])
+        d0 = self.get_vertex(d[0])
+        cost += d0.distance
+
+        cost += d0.get_weight(self.get_vertex(d[1]))
+
+        df = self.get_shortest_path(d[1], '1')
+        cost += self.get_vertex('1').distance
+
+        lsp = len(sp)
+        lpd = len(pd)
+        ldf = len(df)
+        if lsp > 1 and sp[lsp - 2] is pd[0] \
+                or lpd > 1 and pd[lpd - 2] is df[0] \
+                or lpd > 1 and sp[lsp - 1] is pd[1] \
+                or ldf > 1 and pd[lpd - 1] is df[1]:
+            return None
+
+        return cost, sp + pd + df
+
+    def get_shortest_path(self, start_id, target_id):
+        self.dijkstra(start_id)
+        return self.shortest(target_id)[::-1]
 
     def dijkstra(self, start_id):
         logger.log("Dijkstra's shortest path")
-
+        for v in self:
+            v.reset()
         # Init variables
         start = self.get_vertex(start_id)
 

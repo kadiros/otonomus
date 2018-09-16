@@ -7,6 +7,9 @@ class Vertex:
         self.x = x_coor
         self.y = y_coor
         self.adjacent = {}
+        self.reset()
+
+    def reset(self):
         # Set distance to infinity for all nodes
         self.distance = sys.maxint
         # Mark all nodes unvisited
