@@ -66,17 +66,22 @@ class Graph:
 
     def add_edge(self, frm, to, cost=0, is_two_way=False):
         cost = int(cost)
-        self.vert_dict[frm].add_neighbor(self.vert_dict[to], cost)
-        self.is_possible_terminal(frm, to)
+        self.add_edge_internal(cost, frm, to)
         if is_two_way:
-            self.vert_dict[to].add_neighbor(self.vert_dict[frm], cost)
-            self.is_possible_terminal(to, frm)
+            self.add_edge_internal(cost, to, frm)
 
-    def is_possible_terminal(self, frm, to):
+    def add_edge_internal(self, cost, frm, to):
+        self.vert_dict[frm].add_neighbor(self.vert_dict[to], cost)
+        self.add_possible_terminal_edge(frm, to)
+
+    def add_possible_terminal_edge(self, frm, to):
         p = self.passenger_info[0][1], self.passenger_info[0][2]
         d = self.passenger_info[1][1], self.passenger_info[1][2]
-        f = self.vert_dict[frm]
-        t = self.vert_dict[to]
+        f = self.get_vertex(frm)
+        t = self.get_vertex(to)
+
+        if p is None or d is None or f is None or t is None:
+            return
 
         # is possible pick up location
         if self.is_near(p, f, t):
